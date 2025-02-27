@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watchlist</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+<h1>Watchlist</h1>
+</header>
+<main>
+<section>
+<h2>{{ username }}'s Watchlist</h2>
+<form action="/update_watchlist" method="post">
+<input type="hidden" name="username" value="{{ username }}">
+<h2>Available Movies:</h2>
+<ul>
+{% for movie_name in movies %}
+<li>
+    <input type="checkbox" onclick="addMovie('{{ movie_name }}', this)">
+    {{ movie_name }}
+    <select id="rating-{{ movie_name }}">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    <input type="hidden" id="movie-{{ movie_name }}" name="watchlist">
+</li>
+{% endfor %}
+</ul>
+<input type="submit" value="Update Watchlist">
+</form>
+<h2>Movies in your watchlist:</h2>
+<ul>
+{% for movie in user_watchlist %}
+<li>{{ movie }}</li>
+{% endfor %}
+</ul>
+<form action="{{ url_for('get_recommendations') }}" method="post">
+    <input type="hidden" name="username" value="{{ username }}">
+    <input type="submit" value="Get Recommendations">
+</form>
+<script>
+function addMovie(movie, checkbox) {
+    var ratingSelect = document.getElementById('rating-' + movie);
+    var rating = ratingSelect.value;
+    var hiddenField = document.getElementById('movie-' + movie);
+    if (checkbox.checked) {
+        hiddenField.value = JSON.stringify({ movie: movie, rating: rating });
+    } else {
+        hiddenField.value = '';
+    }
+}
+</script>
+</section>
+</main>
+</body>
+</html>
